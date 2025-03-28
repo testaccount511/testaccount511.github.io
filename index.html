@@ -31,6 +31,7 @@
       text-align: center;
       width: 100%;
       max-width: 400px;
+      position: relative; /* Allows positioning of the switch in top-right */
     }
 
     h1 {
@@ -98,6 +99,23 @@
       color: #E83939; /* Red location text */
     }
 
+    .unit-switch {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #E83939; /* Same red color as the button */
+      padding: 8px 15px;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .unit-switch:hover {
+      background-color: #C42929; /* Darker red on hover */
+    }
+
     /* Animation for input */
     input[type="text"], button {
       animation: fadeInUp 0.5s ease-in-out;
@@ -131,10 +149,14 @@
     </div>
 
     <p id="error" class="error"></p>
+
+    <button class="unit-switch" id="unitSwitch">Switch to °C</button>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+      let isCelsius = false; // Start with Fahrenheit as the default unit
+
       // Function to fetch and display weather data based on the location
       function getWeather(location) {
         const API_KEY = "JP7RX9NX78XV42RZDKMPLXK5U";
@@ -147,12 +169,14 @@
               document.getElementById("error").textContent = "Location not found. Please try again.";
               return;
             }
-            const currentTemp = data.currentConditions.temp;
+            const currentTempF = data.currentConditions.temp;
+            const currentTempC = (currentTempF - 32) * 5 / 9; // Convert to Celsius
             const conditions = data.currentConditions.conditions;
             const timeZone = data.timezone;
 
+            // Display temperature based on unit
+            document.getElementById("temp").textContent = isCelsius ? `${currentTempC.toFixed(1)}°C` : `${currentTempF}°F`;
             document.getElementById("location").textContent = location;
-            document.getElementById("temp").textContent = `${currentTemp}°F`;
             document.getElementById("conditions").textContent = conditions;
             document.getElementById("timezone").textContent = timeZone;
             document.getElementById("error").textContent = "";
@@ -174,6 +198,14 @@
         } else {
           document.getElementById("error").textContent = "Please enter a location.";
         }
+      });
+
+      // Toggle between Celsius and Fahrenheit when the unit switch is clicked
+      document.getElementById("unitSwitch").addEventListener("click", function () {
+        isCelsius = !isCelsius;
+        document.getElementById("unitSwitch").textContent = isCelsius ? "Switch to °F" : "Switch to °C";
+        const currentLocation = document.getElementById("location").textContent;
+        getWeather(currentLocation); // Refresh weather data
       });
     });
   </script>
