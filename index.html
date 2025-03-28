@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>PyScript Example</title>
+  <title>Weather App</title>
   <meta charset="utf-8">
-  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const API_KEY = "JP7RX9NX78XV42RZDKMPLXK5U";
+      const LOCATION = "Henderson, NV";
+      const URL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${LOCATION}?unitGroup=us&include=current&key=${API_KEY}&contentType=json&include=timezone`;
+
+      fetch(URL)
+        .then(response => response.json())
+        .then(data => {
+          const currentTemp = data.currentConditions.temp;
+          const conditions = data.currentConditions.conditions;
+          const timeZone = data.timezone;
+
+          document.getElementById("location").textContent = LOCATION;
+          document.getElementById("temp").textContent = `${currentTemp}°F`;
+          document.getElementById("conditions").textContent = conditions;
+          document.getElementById("timezone").textContent = timeZone;
+        })
+        .catch(error => {
+          console.error("Error fetching weather data:", error);
+          document.getElementById("error").textContent = "Failed to load weather data.";
+        });
+    });
+  </script>
 </head>
 <body>
-  <py-script>
-  import requests
-
-API_KEY = "JP7RX9NX78XV42RZDKMPLXK5U"
-
-LOCATION = "Henderson, NV"
-
-# API endpoint
-URL = f"https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/{LOCATION}?unitGroup=us&include=current&key={API_KEY}&contentType=json&include=timezone"
-
-
-# request
-response = requests.get(URL)
-
-if response.status_code == 200:
-    data = response.json()
-    current_temp = data["currentConditions"]["temp"]
-    conditions = data["currentConditions"]["conditions"]
-    print(f"Current Location: {LOCATION}")
-    print(f"Current temperature in {LOCATION} is: {current_temp}°F")
-    print(f"Conditions: {conditions}")
-    print(f"Time Zone: {data['timezone']}")
-else:
-    print('Invalid input')
-  </py-script>
+  <h1>Weather in <span id="location">Loading...</span></h1>
+  <p><strong>Temperature:</strong> <span id="temp">--</span></p>
+  <p><strong>Conditions:</strong> <span id="conditions">--</span></p>
+  <p><strong>Time Zone:</strong> <span id="timezone">--</span></p>
+  <p id="error" style="color: red;"></p>
 </body>
 </html>
