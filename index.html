@@ -99,17 +99,19 @@
       color: #E83939; /* Red location text */
     }
 
+    /* Position the Celsius/Fahrenheit switch box */
     .unit-switch {
       position: absolute;
-      top: 20px;
-      right: 20px; /* Position it at the top right of the background */
+      top: 10px;
+      right: 10px; /* Position it at the top-right of the screen */
       background-color: #E83939; /* Same red color as the button */
-      padding: 8px 15px;
+      padding: 6px 12px; /* Smaller padding */
       border-radius: 8px;
       color: white;
-      font-size: 16px;
+      font-size: 14px; /* Smaller font size */
       cursor: pointer;
       transition: background-color 0.3s ease;
+      border: none;
     }
 
     .unit-switch:hover {
@@ -151,6 +153,7 @@
     <p id="error" class="error"></p>
   </div>
 
+  <!-- Celsius to Fahrenheit switch positioned at the top-right of the screen -->
   <button class="unit-switch" id="unitSwitch">Switch to °C</button>
 
   <script>
