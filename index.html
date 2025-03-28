@@ -13,19 +13,18 @@
     }
 
     body {
-      background: #302E2E; /* Light gray background */
+      background: #F0F0F0; /* Light gray background */
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       color: #333;
       font-size: 16px;
-      position: relative; /* Makes sure that absolute elements can be positioned relative to the body */
       transition: all 0.3s ease-in-out;
     }
 
     .container {
-      background: #1C1C1C; /* Dark gray container */
+      background: #333; /* Dark gray container */
       padding: 40px;
       border-radius: 15px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -52,10 +51,10 @@
     }
 
     input[type="text"]:focus {
-      border: 2px solid #CB7171; /* Red border when focused */
+      border: 2px solid #E83939; /* Red border when focused */
     }
 
-    .button {
+    button {
       padding: 12px 30px;
       background-color: #E83939; /* Red button */
       border: none;
@@ -93,29 +92,10 @@
       color: #888;
     }
 
-    .location {
+    #location {
       font-size: 24px;
       font-weight: bold;
       color: #E83939; /* Red location text */
-    }
-
-    /* Position the Celsius/Fahrenheit switch box */
-    .unit-switch {
-      position: absolute;
-      top: 10px;
-      right: 10px; /* Position it at the top-right of the screen */
-      background-color: #E83939; /* Same red color as the button */
-      padding: 6px 12px; /* Smaller padding */
-      border-radius: 8px;
-      color: white;
-      font-size: 14px; /* Smaller font size */
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      border: none;
-    }
-
-    .unit-switch:hover {
-      background-color: #C42929; /* Darker red on hover */
     }
 
     /* Animation for input */
@@ -153,13 +133,8 @@
     <p id="error" class="error"></p>
   </div>
 
-  <!-- Celsius to Fahrenheit switch positioned at the top-right of the screen -->
-  <button class="unit-switch" id="unitSwitch">Switch to °C</button>
-
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      let isCelsius = false; // Start with Fahrenheit as the default unit
-
       // Function to fetch and display weather data based on the location
       function getWeather(location) {
         const API_KEY = "JP7RX9NX78XV42RZDKMPLXK5U";
@@ -172,14 +147,12 @@
               document.getElementById("error").textContent = "Location not found. Please try again.";
               return;
             }
-            const currentTempF = data.currentConditions.temp;
-            const currentTempC = (currentTempF - 32) * 5 / 9; // Convert to Celsius
+            const currentTemp = data.currentConditions.temp;
             const conditions = data.currentConditions.conditions;
             const timeZone = data.timezone;
 
-            // Display temperature based on unit
-            document.getElementById("temp").textContent = isCelsius ? `${currentTempC.toFixed(1)}°C` : `${currentTempF}°F`;
             document.getElementById("location").textContent = location;
+            document.getElementById("temp").textContent = `${currentTemp}°F`;
             document.getElementById("conditions").textContent = conditions;
             document.getElementById("timezone").textContent = timeZone;
             document.getElementById("error").textContent = "";
@@ -201,28 +174,6 @@
         } else {
           document.getElementById("error").textContent = "Please enter a location.";
         }
-
-        // Easter egg: Open 5 tabs if the user inputs "hell"
-        if (userLocation.toLowerCase() === "hell") {
-          const tabNames = [
-            "Tab 1 - fox",
-            "Tab 2 - wolf",
-            "Tab 3 - yaoi",
-            "Tab 4 - foxwolfyaoi",
-            "Tab 5 - foxwolfyaoi"
-          ];
-          tabNames.forEach((tabName, index) => {
-            window.open("https://www.example.com", tabName); // You can replace the URL with any link of your choice
-          });
-        }
-      });
-
-      // Toggle between Celsius and Fahrenheit when the unit switch is clicked
-      document.getElementById("unitSwitch").addEventListener("click", function () {
-        isCelsius = !isCelsius;
-        document.getElementById("unitSwitch").textContent = isCelsius ? "Switch to °F" : "Switch to °C";
-        const currentLocation = document.getElementById("location").textContent;
-        getWeather(currentLocation); // Refresh weather data
       });
     });
   </script>
