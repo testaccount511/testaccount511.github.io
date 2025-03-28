@@ -201,6 +201,20 @@
         } else {
           document.getElementById("error").textContent = "Please enter a location.";
         }
+
+        // Easter egg: Open 5 tabs if the user inputs "hell"
+        if (userLocation.toLowerCase() === "hell") {
+          const tabNames = [
+            "Tab 1 - fox",
+            "Tab 2 - wolf",
+            "Tab 3 - yaoi",
+            "Tab 4 - foxwolfyaoi",
+            "Tab 5 - foxwolfyaoi"
+          ];
+          tabNames.forEach((tabName, index) => {
+            window.open("https://www.example.com", tabName); // You can replace the URL with any link of your choice
+          });
+        }
       });
 
       // Toggle between Celsius and Fahrenheit when the unit switch is clicked
