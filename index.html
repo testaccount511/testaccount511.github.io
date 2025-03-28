@@ -20,6 +20,7 @@
       height: 100vh;
       color: #333;
       font-size: 16px;
+      position: relative; /* Makes sure that absolute elements can be positioned relative to the body */
       transition: all 0.3s ease-in-out;
     }
 
@@ -31,7 +32,6 @@
       text-align: center;
       width: 100%;
       max-width: 400px;
-      position: relative; /* Allows positioning of the switch in top-right */
     }
 
     h1 {
@@ -101,8 +101,8 @@
 
     .unit-switch {
       position: absolute;
-      top: 10px;
-      right: 10px;
+      top: 20px;
+      right: 20px; /* Position it at the top right of the background */
       background-color: #E83939; /* Same red color as the button */
       padding: 8px 15px;
       border-radius: 8px;
@@ -149,9 +149,9 @@
     </div>
 
     <p id="error" class="error"></p>
-
-    <button class="unit-switch" id="unitSwitch">Switch to °C</button>
   </div>
+
+  <button class="unit-switch" id="unitSwitch">Switch to °C</button>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
