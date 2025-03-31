@@ -87,9 +87,33 @@
             background: gray;
             cursor: not-allowed;
         }
+        .side-effects {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .side-effects div {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: gold;
+            opacity: 0.8;
+            border-radius: 50%;
+            animation: floating 1s infinite alternate ease-in-out;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(20px); }
+        }
     </style>
 </head>
 <body>
+    <audio id="coinSound" src="https://www.myinstants.com/media/sounds/coins.mp3"></audio>
+    <div class="side-effects"></div>
     <div class="container">
         <h1>Slot Machine</h1>
         <p class="balance">Balance: $<span id="balance">1000</span></p>
@@ -107,7 +131,9 @@
         function roll() {
             let bet = parseInt(document.getElementById('bet').value);
             let spinButton = document.getElementById('spinButton');
+            let coinSound = document.getElementById('coinSound');
             spinButton.disabled = true; 
+            coinSound.play();
             if (bet > balance) {
                 bet = balance;
                 document.getElementById('bet').value = bet;
