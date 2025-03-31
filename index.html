@@ -68,6 +68,10 @@
             background: darkorange;
             transform: scale(1.1);
         }
+        button:disabled {
+            background: gray;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body>
@@ -80,7 +84,7 @@
             <span id="slot2">🎰</span>
             <span id="slot3">🎰</span>
         </div>
-        <button onclick="roll()">Spin</button>
+        <button id="spinButton" onclick="roll()">Spin</button>
         <p class="message" id="message"></p>
     </div>
     <script>
@@ -88,6 +92,9 @@
 
         function roll() {
             let bet = parseInt(document.getElementById('bet').value);
+            let spinButton = document.getElementById('spinButton');
+            spinButton.disabled = true; 
+            
             if (bet > balance) {
                 bet = balance;
                 document.getElementById('bet').value = bet;
@@ -129,6 +136,7 @@
                 if (balance <= 0) {
                     document.getElementById('message').innerText = "Game Over! You're out of money!";
                 }
+                spinButton.disabled = false;
             }, 1500);
         }
     </script>
