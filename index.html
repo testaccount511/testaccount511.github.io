@@ -97,9 +97,9 @@
                 return;
             }
             
-            document.getElementById('slot1').style.animation = "spinning 1s infinite";
-            document.getElementById('slot2').style.animation = "spinning 1.2s infinite";
-            document.getElementById('slot3').style.animation = "spinning 1.4s infinite";
+            document.getElementById('slot1').style.animation = "spinning 1s linear infinite";
+            document.getElementById('slot2').style.animation = "spinning 1s linear infinite";
+            document.getElementById('slot3').style.animation = "spinning 1s linear infinite";
             
             setTimeout(() => {
                 let num1 = Math.floor(Math.random() * 10) + 1;
@@ -107,3 +107,30 @@
                 let num3 = Math.floor(Math.random() * 10) + 1;
                 
                 document.getElementById('slot1').innerText = num1;
+                document.getElementById('slot2').innerText = num2;
+                document.getElementById('slot3').innerText = num3;
+                
+                document.getElementById('slot1').style.animation = "none";
+                document.getElementById('slot2').style.animation = "none";
+                document.getElementById('slot3').style.animation = "none";
+                
+                if (num1 === num2 && num2 === num3) {
+                    balance += bet * 30;
+                    document.getElementById('message').innerText = "🎉 JACKPOT!!!!! 🎉";
+                } else if (num1 === num2 || num1 === num3 || num2 === num3) {
+                    balance += bet * 2;
+                    document.getElementById('message').innerText = "🎊 You won! 🎊";
+                } else {
+                    balance -= bet;
+                    document.getElementById('message').innerText = "😢 You lost 😢";
+                }
+                
+                document.getElementById('balance').innerText = balance;
+                if (balance <= 0) {
+                    document.getElementById('message').innerText = "Game Over! You're out of money!";
+                }
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
