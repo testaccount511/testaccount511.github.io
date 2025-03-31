@@ -130,7 +130,7 @@
                     jackpotSound.play();
                     setTimeout(() => { jackpotEffect.style.display = "none"; }, 3000);
                 } else if (num1 === num2 || num1 === num3 || num2 === num3) {
-                    balance += bet * 2;
+                    balance += bet * 1.35;
                     document.getElementById('message').innerText = "🎊 You won! 🎊";
                 } else {
                     balance -= bet;
@@ -140,7 +140,7 @@
                 if (balance <= 0) {
                     document.getElementById('message').innerText = "Game Over! You're out of money!";
                 }
-                spinButton.disabled = false;
+                spinButton.disabled = true;
             }, 1500);
         }
     </script>
