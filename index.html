@@ -88,7 +88,8 @@
             0% { opacity: 1; }
             100% { opacity: 0; }
         }
-        /* Confetti with stars effect */
+
+        /* Confetti with Stars effect */
         .confetti {
             position: absolute;
             top: 0;
@@ -102,14 +103,25 @@
             position: absolute;
             width: 30px;
             height: 30px;
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
             background-color: gold;
-            clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-            animation: confettiFall 2s linear infinite, rotateConfetti 4s linear infinite;
+            animation: confettiFall 3s linear infinite, zoomConfetti 3s ease-in-out infinite, rotateConfetti 4s linear infinite;
         }
+
+        /* Fall animation */
         @keyframes confettiFall {
             0% { transform: translateY(0) translateX(0); }
             100% { transform: translateY(100vh) translateX(50vw); }
         }
+
+        /* Zoom in and out effect */
+        @keyframes zoomConfetti {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1); }
+        }
+
+        /* Rotation animation */
         @keyframes rotateConfetti {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
