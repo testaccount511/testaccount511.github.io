@@ -5,19 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Slot Machine</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        .slot { font-size: 40px; margin: 20px; }
-        .balance { font-size: 20px; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(45deg, #ff0000, #ff7300);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        .slot {
+            font-size: 50px;
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .slot span {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            background: white;
+            color: black;
+            border-radius: 10px;
+            font-size: 40px;
+            text-align: center;
+            animation: spin 0.5s ease-in-out;
+        }
+        @keyframes spin {
+            0% { transform: rotateX(0deg); }
+            50% { transform: rotateX(180deg); }
+            100% { transform: rotateX(360deg); }
+        }
+        .balance, .message {
+            font-size: 24px;
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 20px;
+            background: gold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: darkorange;
+        }
     </style>
 </head>
 <body>
-    <h1>Slot Machine</h1>
-    <p class="balance">Balance: $<span id="balance">1000</span></p>
-    <label>Bet Amount: $<input type="number" id="bet" value="10" min="1"></label>
-    <div class="slot" id="slots">🎰 🎰 🎰</div>
-    <button onclick="roll()">Spin</button>
-    <p id="message"></p>
-
+    <div class="container">
+        <h1>Slot Machine</h1>
+        <p class="balance">Balance: $<span id="balance">1000</span></p>
+        <label>Bet Amount: $<input type="number" id="bet" value="10" min="1"></label>
+        <div class="slot">
+            <span id="slot1">🎰</span>
+            <span id="slot2">🎰</span>
+            <span id="slot3">🎰</span>
+        </div>
+        <button onclick="roll()">Spin</button>
+        <p class="message" id="message"></p>
+    </div>
     <script>
         let balance = 1000;
 
@@ -35,7 +94,20 @@
             let num1 = Math.floor(Math.random() * 10) + 1;
             let num2 = Math.floor(Math.random() * 10) + 1;
             let num3 = Math.floor(Math.random() * 10) + 1;
-            document.getElementById('slots').innerText = `${num1} ${num2} ${num3}`;
+            
+            document.getElementById('slot1').innerText = num1;
+            document.getElementById('slot2').innerText = num2;
+            document.getElementById('slot3').innerText = num3;
+            
+            document.getElementById('slot1').style.animation = "spin 0.5s";
+            document.getElementById('slot2').style.animation = "spin 0.5s";
+            document.getElementById('slot3').style.animation = "spin 0.5s";
+            
+            setTimeout(() => {
+                document.getElementById('slot1').style.animation = "";
+                document.getElementById('slot2').style.animation = "";
+                document.getElementById('slot3').style.animation = "";
+            }, 500);
             
             if (num1 === num2 && num2 === num3) {
                 balance += bet * 30;
