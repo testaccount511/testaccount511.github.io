@@ -88,7 +88,7 @@
             0% { opacity: 1; }
             100% { opacity: 0; }
         }
-        /* Confetti effect styles */
+        /* Confetti with stars effect */
         .confetti {
             position: absolute;
             top: 0;
@@ -100,14 +100,19 @@
         }
         .confetti-piece {
             position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: random;
-            animation: confettiFall 2s linear infinite;
+            width: 30px;
+            height: 30px;
+            background-color: gold;
+            clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+            animation: confettiFall 2s linear infinite, rotateConfetti 4s linear infinite;
         }
         @keyframes confettiFall {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(100vh) rotate(360deg); }
+            0% { transform: translateY(0) translateX(0); }
+            100% { transform: translateY(100vh) translateX(50vw); }
+        }
+        @keyframes rotateConfetti {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -147,17 +152,17 @@
                 document.getElementById('slot2').innerText = num2;
                 document.getElementById('slot3').innerText = num3;
 
-                // Confetti effect function
+                // Confetti effect function with stars
                 function startConfetti() {
                     const confettiContainer = document.createElement('div');
                     confettiContainer.classList.add('confetti');
                     document.body.appendChild(confettiContainer);
 
-                    for (let i = 0; i < 100; i++) {
+                    for (let i = 0; i < 200; i++) {
                         const confettiPiece = document.createElement('div');
                         confettiPiece.classList.add('confetti-piece');
                         confettiPiece.style.left = `${Math.random() * 100}vw`;
-                        confettiPiece.style.animationDuration = `${Math.random() * 2 + 3}s`;  // Random fall time
+                        confettiPiece.style.animationDuration = `${Math.random() * 2 + 3}s`; // Random fall time
                         confettiContainer.appendChild(confettiPiece);
                     }
 
@@ -171,12 +176,12 @@
                     document.getElementById('message').innerText = "🎉 JACKPOT!!!!! 🎉";
                     jackpotEffect.style.display = "block";
                     jackpotSound.play();
-                    startConfetti(); // Trigger confetti
+                    startConfetti(); // Trigger confetti with stars
                     setTimeout(() => { jackpotEffect.style.display = "none"; }, 3000);
                 } else if (num1 === num2 || num1 === num3 || num2 === num3) {
                     balance += bet * 1.35;
                     document.getElementById('message').innerText = "🎊 You won! 🎊";
-                    startConfetti(); // Trigger confetti
+                    startConfetti(); // Trigger confetti with stars
                 } else {
                     balance -= bet;
                     document.getElementById('message').innerText = "😢 You lost 😢";
