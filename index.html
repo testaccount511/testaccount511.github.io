@@ -8,7 +8,8 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background: radial-gradient(circle, #ff0000, #ff7300, #ff0000);
+            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
+            background-size: 400% 400%;
             color: white;
             height: 100vh;
             display: flex;
@@ -16,22 +17,26 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            animation: flashing 0.1s infinite alternate;
+            animation: rainbow 0.5s infinite alternate, bounce 0.5s infinite alternate;
         }
-        @keyframes flashing {
-            0% { background: red; }
-            100% { background: yellow; }
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
         }
         .container {
             background: rgba(0, 0, 0, 0.8);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
-            animation: pulse 0.5s infinite alternate;
+            box-shadow: 0 0 50px rgba(255, 255, 0, 1);
+            animation: pulse 0.2s infinite alternate, bounce 0.5s infinite alternate;
         }
         @keyframes pulse {
-            0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-            100% { box-shadow: 0 0 40px rgba(255, 215, 0, 1); }
+            0% { box-shadow: 0 0 20px rgba(255, 255, 0, 0.5); }
+            100% { box-shadow: 0 0 60px rgba(255, 255, 0, 1); }
         }
         .slot {
             font-size: 60px;
@@ -54,15 +59,7 @@
         }
         @keyframes flicker {
             0% { opacity: 1; }
-            100% { opacity: 0.5; }
-        }
-        @keyframes spinning {
-            0% { transform: rotateX(0deg); }
-            100% { transform: rotateX(360deg); }
-        }
-        .balance, .message {
-            font-size: 26px;
-            margin: 15px;
+            100% { opacity: 0.3; }
         }
         button {
             padding: 15px 30px;
@@ -71,49 +68,32 @@
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            margin-top: 15px;
-            transition: transform 0.2s;
-            animation: buttonGlow 0.3s infinite alternate;
+            animation: buttonGlow 0.2s infinite alternate, bounce 0.5s infinite alternate;
         }
         @keyframes buttonGlow {
             0% { box-shadow: 0 0 10px gold; }
-            100% { box-shadow: 0 0 20px white; }
+            100% { box-shadow: 0 0 40px white; }
         }
-        button:hover {
-            background: darkorange;
-            transform: scale(1.1);
-        }
-        button:disabled {
-            background: gray;
-            cursor: not-allowed;
-        }
-        .side-effects {
+        .jackpot-effect {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            overflow: hidden;
+            background: rgba(255, 255, 0, 0.9);
+            display: none;
+            animation: flash 0.1s infinite alternate;
         }
-        .side-effects div {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: gold;
-            opacity: 0.8;
-            border-radius: 50%;
-            animation: floating 1s infinite alternate ease-in-out;
-        }
-        @keyframes floating {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(20px); }
+        @keyframes flash {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
         }
     </style>
 </head>
 <body>
     <audio id="coinSound" src="https://www.myinstants.com/media/sounds/coins.mp3"></audio>
-    <div class="side-effects"></div>
+    <audio id="jackpotSound" src="https://www.myinstants.com/media/sounds/tadaa.mp3"></audio>
+    <div id="jackpotEffect" class="jackpot-effect"></div>
     <div class="container">
         <h1>Slot Machine</h1>
         <p class="balance">Balance: $<span id="balance">1000</span></p>
@@ -132,20 +112,10 @@
             let bet = parseInt(document.getElementById('bet').value);
             let spinButton = document.getElementById('spinButton');
             let coinSound = document.getElementById('coinSound');
+            let jackpotSound = document.getElementById('jackpotSound');
+            let jackpotEffect = document.getElementById('jackpotEffect');
             spinButton.disabled = true; 
             coinSound.play();
-            if (bet > balance) {
-                bet = balance;
-                document.getElementById('bet').value = bet;
-            }
-            if (balance <= 0) {
-                document.getElementById('message').innerText = "Game Over! You're out of money!";
-                return;
-            }
-            document.body.style.animation = "flashing 0.1s infinite alternate";
-            document.getElementById('slot1').style.animation = "spinning 0.5s linear infinite";
-            document.getElementById('slot2').style.animation = "spinning 0.5s linear infinite";
-            document.getElementById('slot3').style.animation = "spinning 0.5s linear infinite";
             setTimeout(() => {
                 let num1 = Math.floor(Math.random() * 10) + 1;
                 let num2 = Math.floor(Math.random() * 10) + 1;
@@ -153,13 +123,12 @@
                 document.getElementById('slot1').innerText = num1;
                 document.getElementById('slot2').innerText = num2;
                 document.getElementById('slot3').innerText = num3;
-                document.getElementById('slot1').style.animation = "none";
-                document.getElementById('slot2').style.animation = "none";
-                document.getElementById('slot3').style.animation = "none";
-                document.body.style.animation = "none";
                 if (num1 === num2 && num2 === num3) {
                     balance += bet * 30;
                     document.getElementById('message').innerText = "🎉 JACKPOT!!!!! 🎉";
+                    jackpotEffect.style.display = "block";
+                    jackpotSound.play();
+                    setTimeout(() => { jackpotEffect.style.display = "none"; }, 3000);
                 } else if (num1 === num2 || num1 === num3 || num2 === num3) {
                     balance += bet * 2;
                     document.getElementById('message').innerText = "🎊 You won! 🎊";
