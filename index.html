@@ -1,210 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slot Machine</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet);
-            background-size: 400% 400%;
-            color: white;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            animation: rainbow 0.5s infinite alternate, bounce 0.5s infinite alternate;
-        }
-        @keyframes rainbow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
-        }
-        @keyframes bounce {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
-        }
-        .container {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 0 50px rgba(255, 255, 0, 1);
-            animation: pulse 0.2s infinite alternate, bounce 0.5s infinite alternate;
-        }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 20px rgba(255, 255, 0, 0.5); }
-            100% { box-shadow: 0 0 60px rgba(255, 255, 0, 1); }
-        }
-        .slot {
-            font-size: 60px;
-            margin: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-        }
-        .slot span {
-            display: inline-block;
-            width: 70px;
-            height: 70px;
-            line-height: 70px;
-            background: white;
-            color: black;
-            border-radius: 10px;
-            font-size: 50px;
-            text-align: center;
-            animation: flicker 0.1s infinite alternate;
-        }
-        @keyframes flicker {
-            0% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
-        button {
-            padding: 15px 30px;
-            font-size: 22px;
-            background: gold;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            animation: buttonGlow 0.2s infinite alternate, bounce 0.5s infinite alternate;
-        }
-        @keyframes buttonGlow {
-            0% { box-shadow: 0 0 10px gold; }
-            100% { box-shadow: 0 0 40px white; }
-        }
-        .jackpot-effect {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 0, 0.9);
-            display: none;
-            animation: flash 0.1s infinite alternate;
-        }
-        @keyframes flash {
-            0% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-
-        /* Confetti with Stars effect */
-        .confetti {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 100;
-        }
-        .confetti-piece {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            background-color: gold;
-            animation: confettiFall 3s linear infinite, zoomConfetti 3s ease-in-out infinite, rotateConfetti 4s linear infinite;
-        }
-
-        /* Fall animation */
-        @keyframes confettiFall {
-            0% { transform: translateY(0) translateX(0); }
-            100% { transform: translateY(100vh) translateX(50vw); }
-        }
-
-        /* Zoom in and out effect */
-        @keyframes zoomConfetti {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.5); }
-            100% { transform: scale(1); }
-        }
-
-        /* Rotation animation */
-        @keyframes rotateConfetti {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+  <title>Speech to Text Typer</title>
 </head>
 <body>
-    <audio id="coinSound" src="https://www.myinstants.com/media/sounds/coins.mp3"></audio>
-    <audio id="jackpotSound" src="https://www.myinstants.com/media/sounds/tadaa.mp3"></audio>
-    <div id="jackpotEffect" class="jackpot-effect"></div>
-    <div class="container">
-        <h1>Slot Machine</h1>
-        <p class="balance">Balance: $<span id="balance">1000</span></p>
-        <label>Bet Amount: $<input type="number" id="bet" value="10" min="1"></label>
-        <div class="slot">
-            <span id="slot1">🎰</span>
-            <span id="slot2">🎰</span>
-            <span id="slot3">🎰</span>
-        </div>
-        <button id="spinButton" onclick="roll()">Spin</button>
-        <p class="message" id="message"></p>
-    </div>
+  <input id="target" type="text" placeholder="Speak to type..." autofocus />
+  <script>
+    const targetInput = document.getElementById('target');
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      alert('Your browser does not support Speech Recognition');
+      throw new Error("SpeechRecognition not supported");
+    }
 
-    <script>
-        let balance = 1000;
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
 
-        function roll() {
-            let bet = parseInt(document.getElementById('bet').value);
-            let spinButton = document.getElementById('spinButton');
-            let coinSound = document.getElementById('coinSound');
-            let jackpotSound = document.getElementById('jackpotSound');
-            let jackpotEffect = document.getElementById('jackpotEffect');
-            spinButton.disabled = true; 
-            coinSound.play();
-            setTimeout(() => {
-                let num1 = Math.floor(Math.random() * 10) + 1;
-                let num2 = Math.floor(Math.random() * 10) + 1;
-                let num3 = Math.floor(Math.random() * 10) + 1;
-                document.getElementById('slot1').innerText = num1;
-                document.getElementById('slot2').innerText = num2;
-                document.getElementById('slot3').innerText = num3;
+    let lastTypedText = "";
 
-                // Confetti effect function with stars
-                function startConfetti() {
-                    const confettiContainer = document.createElement('div');
-                    confettiContainer.classList.add('confetti');
-                    document.body.appendChild(confettiContainer);
+    recognition.onresult = function(event) {
+      const lastResult = event.results[event.results.length - 1];
+      const transcript = lastResult[0].transcript.trim();
 
-                    for (let i = 0; i < 200; i++) {
-                        const confettiPiece = document.createElement('div');
-                        confettiPiece.classList.add('confetti-piece');
-                        confettiPiece.style.left = `${Math.random() * 100}vw`;
-                        confettiPiece.style.animationDuration = `${Math.random() * 2 + 3}s`; // Random fall time
-                        confettiContainer.appendChild(confettiPiece);
-                    }
+      console.log("You said:", transcript);
+      handleCommand(transcript);
+    };
 
-                    setTimeout(() => {
-                        document.body.removeChild(confettiContainer);
-                    }, 5000); // Remove confetti after 5 seconds
-                }
+    function handleCommand(text) {
+      const lower = text.toLowerCase();
+      if (lower.includes("exit")) {
+        console.log("Exiting...");
+        recognition.stop();
+        return;
+      }
 
-                if (num1 === num2 && num2 === num3) {
-                    balance += bet * 30;
-                    document.getElementById('message').innerText = "🎉 JACKPOT!!!!! 🎉";
-                    jackpotEffect.style.display = "block";
-                    jackpotSound.play();
-                    startConfetti(); // Trigger confetti with stars
-                    setTimeout(() => { jackpotEffect.style.display = "none"; }, 3000);
-                } else if (num1 === num2 || num1 === num3 || num2 === num3) {
-                    balance += bet * 1.35;
-                    document.getElementById('message').innerText = "🎊 You won! 🎊";
-                    startConfetti(); // Trigger confetti with stars
-                } else {
-                    balance -= bet;
-                    document.getElementById('message').innerText = "😢 You lost 😢";
-                }
-                document.getElementById('balance').innerText = balance;
-                if (balance <= 0) {
-                    document.getElementById('message').innerText = "Game Over! You're out of money!";
-                }
-                spinButton.disabled = false; // Re-enable button
-            }, 1500);
-        }
-    </script>
+      if (lower.includes("enter")) {
+        const keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+        targetInput.dispatchEvent(keyboardEvent);
+        return;
+      }
+
+      if (lower.includes("search")) {
+        console.log("Search command - focus input");
+        targetInput.focus();
+        return;
+      }
+
+      // Remove command words
+      const filtered = text.split(" ")
+        .filter(word => !["enter", "search", "exit"].includes(word.toLowerCase()))
+        .join(" ");
+
+      if (filtered && filtered !== lastTypedText) {
+        typeText(filtered);
+        lastTypedText = filtered;
+      }
+    }
+
+    function typeText(text) {
+      targetInput.focus();
+      targetInput.value = '';
+      let i = 0;
+      const interval = setInterval(() => {
+        targetInput.value += text[i];
+        i++;
+        if (i >= text.length) clearInterval(interval);
+      }, 50);
+    }
+
+    recognition.start();
+  </script>
 </body>
 </html>
