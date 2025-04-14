@@ -1,77 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Speech to Text Typer</title>
+  <meta charset="UTF-8">
+  <title>MP4 Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #111;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    input[type="file"] {
+      margin-bottom: 1rem;
+    }
+    video {
+      width: 100%;
+      max-width: 800px;
+      height: auto;
+      border: 2px solid #333;
+      border-radius: 12px;
+      background: black;
+    }
+  </style>
 </head>
 <body>
-  <input id="target" type="text" placeholder="Speak to type..." autofocus />
+  <h1>MP4 Player</h1>
+  <input type="file" accept="video/mp4" id="fileInput">
+  <video id="videoPlayer" controls></video>
+
   <script>
-    const targetInput = document.getElementById('target');
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
-    if (!SpeechRecognition) {
-      alert('Your browser does not support Speech Recognition');
-      throw new Error("SpeechRecognition not supported");
-    }
+    const fileInput = document.getElementById('fileInput');
+    const videoPlayer = document.getElementById('videoPlayer');
 
-    const recognition = new SpeechRecognition();
-    recognition.continuous = true;
-    recognition.interimResults = false;
-    recognition.lang = 'en-US';
-
-    let lastTypedText = "";
-
-    recognition.onresult = function(event) {
-      const lastResult = event.results[event.results.length - 1];
-      const transcript = lastResult[0].transcript.trim();
-
-      console.log("You said:", transcript);
-      handleCommand(transcript);
-    };
-
-    function handleCommand(text) {
-      const lower = text.toLowerCase();
-      if (lower.includes("exit")) {
-        console.log("Exiting...");
-        recognition.stop();
-        return;
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      if (file && file.type === "video/mp4") {
+        const videoURL = URL.createObjectURL(file);
+        videoPlayer.src = videoURL;
+        videoPlayer.load();
+        videoPlayer.play();
+      } else {
+        alert("Please upload a valid MP4 file.");
       }
-
-      if (lower.includes("enter")) {
-        const keyboardEvent = new KeyboardEvent('keydown', { key: 'Enter' });
-        targetInput.dispatchEvent(keyboardEvent);
-        return;
-      }
-
-      if (lower.includes("search")) {
-        console.log("Search command - focus input");
-        targetInput.focus();
-        return;
-      }
-
-      // Remove command words
-      const filtered = text.split(" ")
-        .filter(word => !["enter", "search", "exit"].includes(word.toLowerCase()))
-        .join(" ");
-
-      if (filtered && filtered !== lastTypedText) {
-        typeText(filtered);
-        lastTypedText = filtered;
-      }
-    }
-
-    function typeText(text) {
-      targetInput.focus();
-      targetInput.value = '';
-      let i = 0;
-      const interval = setInterval(() => {
-        targetInput.value += text[i];
-        i++;
-        if (i >= text.length) clearInterval(interval);
-      }, 50);
-    }
-
-    recognition.start();
+    });
   </script>
 </body>
 </html>
