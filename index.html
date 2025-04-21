@@ -2,130 +2,56 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>MP3 Playlist Player</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Circle Animation</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background: #111;
-      color: white;
-      text-align: center;
-      padding: 2rem;
-    }
-    h1 {
-      margin-bottom: 1rem;
-    }
-    input[type="file"] {
-      margin-bottom: 1rem;
-    }
-    audio {
-      width: 100%;
-      max-width: 600px;
-      margin: 1rem 0;
-    }
-    .controls {
-      margin-top: 1rem;
-    }
-    button {
-      padding: 0.5rem 1rem;
-      margin: 0 0.5rem;
-      border: none;
-      border-radius: 8px;
-      background: #444;
-      color: white;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #666;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 1rem;
-    }
-    li {
-      padding: 0.25rem 0;
-      cursor: pointer;
-    }
-    li.active {
-      color: #00ffcc;
-      font-weight: bold;
+    canvas {
+      border: 1px solid black;
+      display: block;
+      margin: 0 auto;
+      background-color: #f0f0f0;
     }
   </style>
 </head>
 <body>
-  <h1>MP3 Playlist Player</h1>
-  <input type="file" accept="audio/mp3" id="fileInput" multiple>
-  <audio id="audioPlayer" controls></audio>
-  <div class="controls">
-    <button id="prevBtn">Previous</button>
-    <button id="nextBtn">Next</button>
-  </div>
-  <ul id="playlist"></ul>
+  <canvas id="myCanvas" width="500" height="500"></canvas>
 
   <script>
-    const fileInput = document.getElementById('fileInput');
-    const audioPlayer = document.getElementById('audioPlayer');
-    const playlistEl = document.getElementById('playlist');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
 
-    let playlist = [];
-    let currentIndex = 0;
+    const centerX = canvas.width / 2; // center of the larger circle
+    const centerY = canvas.height / 2;
+    const radius = 100; // radius of the larger circle
+    const orbitRadius = 50; // radius of the orbit of the smaller circle
+    let angle = 0; // starting angle for the small circle
 
-    fileInput.addEventListener('change', () => {
-      const files = Array.from(fileInput.files);
-      playlist = files.filter(file => file.type === 'audio/mp3');
-      currentIndex = 0;
-      updatePlaylistUI();
-      playCurrentTrack();
-    });
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
 
-    function updatePlaylistUI() {
-      playlistEl.innerHTML = '';
-      playlist.forEach((file, index) => {
-        const li = document.createElement('li');
-        li.textContent = file.name;
-        if (index === currentIndex) li.classList.add('active');
-        li.addEventListener('click', () => {
-          currentIndex = index;
-          playCurrentTrack();
-        });
-        playlistEl.appendChild(li);
-      });
+      // Draw the larger circle
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      ctx.strokeStyle = 'black';
+      ctx.stroke();
+
+      // Calculate the position of the smaller circle
+      const smallCircleX = centerX + Math.cos(angle) * orbitRadius;
+      const smallCircleY = centerY + Math.sin(angle) * orbitRadius;
+
+      // Draw the smaller circle
+      ctx.beginPath();
+      ctx.arc(smallCircleX, smallCircleY, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'red';
+      ctx.fill();
+
+      // Increment the angle to move the small circle
+      angle += 0.01;
+
+      requestAnimationFrame(draw); // Call the draw function to animate
     }
 
-    function playCurrentTrack() {
-      if (playlist.length === 0) return;
-      const file = playlist[currentIndex];
-      const audioURL = URL.createObjectURL(file);
-      audioPlayer.src = audioURL;
-      audioPlayer.load();
-      audioPlayer.play();
-      updatePlaylistUI();
-    }
-
-    audioPlayer.addEventListener('ended', () => {
-      if (currentIndex < playlist.length - 1) {
-        currentIndex++;
-        playCurrentTrack();
-      }
-    });
-
-    prevBtn.addEventListener('click', () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        playCurrentTrack();
-      }
-    });
-
-    nextBtn.addEventListener('click', () => {
-      if (currentIndex < playlist.length - 1) {
-        currentIndex++;
-        playCurrentTrack();
-      }
-    });
+    draw(); // Start the animation
   </script>
 </body>
 </html>
