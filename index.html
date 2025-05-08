@@ -1,94 +1,245 @@
 <!DOCTYPE html>
+<html>
+<head>
+  <title>Weather App</title>
+  <meta charset="utf-8">
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Function to fetch and display weather data based on the location
+      function getWeather(location) {
+        const API_KEY = "JP7RX9NX78XV42RZDKMPLXK5U";
+        const URL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?unitGroup=us&include=current&key=${API_KEY}&contentType=json&include=timezone`;
+
+        fetch(URL)
+          .then(response => response.json())
+          .then(data => {
+            if (data.error) {
+              document.getElementById("error").textContent = "Location not found. Please try again.";
+              return;
+            }
+            const currentTemp = data.currentConditions.temp;
+            const conditions = data.currentConditions.conditions;
+            const timeZone = data.timezone;
+
+            document.getElementById("location").textContent = location;
+            document.getElementById("temp").textContent = `${currentTemp}°F`;
+            document.getElementById("conditions").textContent = conditions;
+            document.getElementById("timezone").textContent = timeZone;
+            document.getElementById("error").textContent = "";
+          })
+          .catch(error => {
+            console.error("Error fetching weather data:", error);
+            document.getElementById("error").textContent = "Failed to load weather data.";
+          });
+      }
+
+      // Call the function with default location on load
+      getWeather("Henderson, NV");
+
+      // Add event listener for the button
+      document.getElementById("getWeatherButton").addEventListener("click", function () {
+        const userLocation = document.getElementById("locationInput").value;
+        if (userLocation) {
+          getWeather(userLocation);
+        } else {
+          document.getElementById("error").textContent = "Please enter a location.";
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>Weather App</h1>
+  <p><strong>Enter a location:</strong></p>
+  <input type="text" id="locationInput" placeholder="e.g., New York, NY">
+  <button id="getWeatherButton">Get Weather</button>
+
+  <h2>Weather in <span id="location">Loading...</span></h2>
+  <p><strong>Temperature:</strong> <span id="temp">--</span></p>
+  <p><strong>Conditions:</strong> <span id="conditions">--</span></p>
+  <p><strong>Time Zone:</strong> <span id="timezone">--</span></p>
+  <p id="error" style="color: red;"></p>
+</body>
+</html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADOFI-like Game</title>
+  <title>Weather App</title>
   <style>
-    canvas {
-      border: 1px solid black;
-      display: block;
-      margin: 0 auto;
-      background-color: #f0f0f0;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #362929; /* Light gray background */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+      font-size: 16px;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .container {
+      background: #333; /* Dark gray container */
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      font-size: 36px;
+      color: #E83939; /* Red color for the title */
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      width: 80%;
+      padding: 12px;
+      margin: 20px 0;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 18px;
+      outline: none;
+      transition: border 0.3s ease-in-out;
+    }
+
+    input[type="text"]:focus {
+      border: 2px solid #E83939; /* Red border when focused */
+    }
+
+    button {
+      padding: 12px 30px;
+      background-color: #E83939; /* Red button */
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 85%;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #C42929; /* Darker red on hover */
+    }
+
+    .weather-info {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #E83939; /* Red text for weather info */
+    }
+
+    .weather-info span {
+      font-weight: bold;
+    }
+
+    .error {
+      color: red;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .loading {
+      font-size: 18px;
+      color: #888;
+    }
+
+    #location {
+      font-size: 24px;
+      font-weight: bold;
+      color: #E83939; /* Red location text */
+    }
+
+    /* Animation for input */
+    input[type="text"], button {
+      animation: fadeInUp 0.5s ease-in-out;
+    }
+
+    /* Fade-in-up animation */
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
 <body>
-  <canvas id="myCanvas" width="500" height="500"></canvas>
+
+  <div class="container">
+    <h1>Weather App</h1>
+    <input type="text" id="locationInput" placeholder="Enter location (e.g., New York, NY)">
+    <button id="getWeatherButton">Get Weather</button>
+
+    <div class="weather-info">
+      <h2>Weather in <span id="location" class="loading">Loading...</span></h2>
+      <p><strong>Temperature:</strong> <span id="temp">--</span></p>
+      <p><strong>Conditions:</strong> <span id="conditions">--</span></p>
+      <p><strong>Time Zone:</strong> <span id="timezone">--</span></p>
+    </div>
+
+    <p id="error" class="error"></p>
+  </div>
 
   <script>
-    const canvas = document.getElementById('myCanvas');
-    const ctx = canvas.getContext('2d');
+    document.addEventListener("DOMContentLoaded", function () {
+      // Function to fetch and display weather data based on the location
+      function getWeather(location) {
+        const API_KEY = "JP7RX9NX78XV42RZDKMPLXK5U";
+        const URL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?unitGroup=us&include=current&key=${API_KEY}&contentType=json&include=timezone`;
 
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = 100; // Larger circle radius
-    const orbitRadius = 50; // Smaller circle orbit radius
-    let angle = 0; // Initial angle for the smaller circle's orbit
-    const speed = 0.05; // Speed of the movement
-    const angleStep = 0.02; // Step change when a key is pressed
-    let isMoving = true; // Movement state (simulating ADOFI-like beat)
-    
-    // Player's circle position
-    let playerAngle = 0;
-    
-    // Function to draw the game scene
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+        fetch(URL)
+          .then(response => response.json())
+          .then(data => {
+            if (data.error) {
+              document.getElementById("error").textContent = "Location not found. Please try again.";
+              return;
+            }
+            const currentTemp = data.currentConditions.temp;
+            const conditions = data.currentConditions.conditions;
+            const timeZone = data.timezone;
 
-      // Draw the larger circle (track)
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-      ctx.strokeStyle = 'black';
-      ctx.stroke();
-
-      // Calculate the position of the moving circle
-      const playerX = centerX + Math.cos(playerAngle) * orbitRadius;
-      const playerY = centerY + Math.sin(playerAngle) * orbitRadius;
-
-      // Draw the moving circle (the player's object)
-      ctx.beginPath();
-      ctx.arc(playerX, playerY, 10, 0, Math.PI * 2);
-      ctx.fillStyle = 'red';
-      ctx.fill();
-
-      // Update the angle for the circular movement
-      if (isMoving) {
-        playerAngle += speed;
+            document.getElementById("location").textContent = location;
+            document.getElementById("temp").textContent = `${currentTemp}°F`;
+            document.getElementById("conditions").textContent = conditions;
+            document.getElementById("timezone").textContent = timeZone;
+            document.getElementById("error").textContent = "";
+          })
+          .catch(error => {
+            console.error("Error fetching weather data:", error);
+            document.getElementById("error").textContent = "Failed to load weather data.";
+          });
       }
 
-      // Visual effect on movement
-      if (Math.sin(playerAngle * 10) > 0) {
-        ctx.fillStyle = 'blue';
-      } else {
-        ctx.fillStyle = 'green';
-      }
-      
-      // Add more effects, colors, etc., based on game logic
+      // Call the function with default location on load
+      getWeather("Henderson, NV");
 
-      requestAnimationFrame(draw); // Keep animating the frame
-    }
-
-    // Keypress event to simulate interaction (left or right turns)
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'ArrowLeft') {
-        playerAngle -= angleStep; // Rotate counterclockwise
-      } else if (event.key === 'ArrowRight') {
-        playerAngle += angleStep; // Rotate clockwise
-      }
+      // Add event listener for the button
+      document.getElementById("getWeatherButton").addEventListener("click", function () {
+        const userLocation = document.getElementById("locationInput").value;
+        if (userLocation) {
+          getWeather(userLocation);
+        } else {
+          document.getElementById("error").textContent = "Please enter a location.";
+        }
+      });
     });
-
-    // Function to simulate beats (optional for music sync)
-    function simulateBeat() {
-      // Toggle movement on or off based on a simulated rhythm
-      setInterval(() => {
-        isMoving = !isMoving;
-      }, 500); // Toggle every 500ms, mimicking a beat
-    }
-
-    // Start game logic
-    simulateBeat(); // Start the rhythm
-    draw(); // Start drawing
   </script>
+
 </body>
-</html>
