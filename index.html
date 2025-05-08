@@ -1,68 +1,4 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Weather App</title>
-  <meta charset="utf-8">
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      // Function to fetch and display weather data based on the location
-      function getWeather(location) {
-        const API_KEY = "JP7RX9NX78XV42RZDKMPLXK5U";
-        const URL = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?unitGroup=us&include=current&key=${API_KEY}&contentType=json&include=timezone`;
-
-        fetch(URL)
-          .then(response => response.json())
-          .then(data => {
-            if (data.error) {
-              document.getElementById("error").textContent = "Location not found. Please try again.";
-              return;
-            }
-            const currentTemp = data.currentConditions.temp;
-            const conditions = data.currentConditions.conditions;
-            const timeZone = data.timezone;
-
-            document.getElementById("location").textContent = location;
-            document.getElementById("temp").textContent = `${currentTemp}°F`;
-            document.getElementById("conditions").textContent = conditions;
-            document.getElementById("timezone").textContent = timeZone;
-            document.getElementById("error").textContent = "";
-          })
-          .catch(error => {
-            console.error("Error fetching weather data:", error);
-            document.getElementById("error").textContent = "Failed to load weather data.";
-          });
-      }
-
-      // Call the function with default location on load
-      getWeather("Henderson, NV");
-
-      // Add event listener for the button
-      document.getElementById("getWeatherButton").addEventListener("click", function () {
-        const userLocation = document.getElementById("locationInput").value;
-        if (userLocation) {
-          getWeather(userLocation);
-        } else {
-          document.getElementById("error").textContent = "Please enter a location.";
-        }
-      });
-    });
-  </script>
-</head>
-<body>
-  <h1>Weather App</h1>
-  <p><strong>Enter a location:</strong></p>
-  <input type="text" id="locationInput" placeholder="e.g., New York, NY">
-  <button id="getWeatherButton">Get Weather</button>
-
-  <h2>Weather in <span id="location">Loading...</span></h2>
-  <p><strong>Temperature:</strong> <span id="temp">--</span></p>
-  <p><strong>Conditions:</strong> <span id="conditions">--</span></p>
-  <p><strong>Time Zone:</strong> <span id="timezone">--</span></p>
-  <p id="error" style="color: red;"></p>
-</body>
-</html>
-
-<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -243,3 +179,4 @@
   </script>
 
 </body>
+
